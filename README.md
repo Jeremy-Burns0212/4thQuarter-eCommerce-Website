@@ -9,7 +9,7 @@ of ASP.NET Core MVC (Model View Controller).
 - Shopping Cart
 
 ## How to get started
-- CLone or download repository
+- Clone or download repository
 - Download .NET 10 SDK
 - Recommended to use Visual Studio 2026
 - Open in VS 2026 and hit run
