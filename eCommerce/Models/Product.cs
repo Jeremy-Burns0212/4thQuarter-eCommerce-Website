@@ -11,7 +11,6 @@ public class Product
 	/// The unique identifier for the product
 	/// </summary>
 	[Key]
-
 	public int ProductId { get; set; }
 
 
@@ -19,12 +18,11 @@ public class Product
 	/// The user facing title of the product
 	/// </summary>
 	[StringLength(50, ErrorMessage = "Titles cannot be more than 50 characters")]
-	
 	public required string Title { get; set; }
 
 	/// <summary>
 	/// The current sales price of the pproduct
 	/// </summary>
 	[Range(0, 10_000)]
-	public double price { get; set; }
+	public double Price { get; set; }
 }
