@@ -2,9 +2,6 @@
 
 namespace eCommerce.Models;
 
-/// <summary>
-/// Represents and individual product for sale
-/// </summary>
 public class Product
 {
 	/// <summary>
@@ -13,7 +10,6 @@ public class Product
 	[Key]
 	public int ProductId { get; set; }
 
-
 	/// <summary>
 	/// The user facing title of the product
 	/// </summary>
@@ -21,8 +17,8 @@ public class Product
 	public required string Title { get; set; }
 
 	/// <summary>
-	/// The current sales price of the pproduct
+	/// The current sales price of the product
 	/// </summary>
-	[Range(0, 10_000)]
-	public double Price { get; set; }
+	[Range(0, 10000)]
+	public decimal Price { get; set; }
 }
