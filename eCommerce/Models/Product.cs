@@ -20,5 +20,5 @@ public class Product
 	/// The current sales price of the product
 	/// </summary>
 	[Range(0, 10000)]
-	public double Price { get; set; }
+	public decimal Price { get; set; }
 }
