@@ -57,4 +57,19 @@ public class ProductController : Controller
 
 		return View(product);
 	}
+
+	[HttpPost]
+	public async Task<IActionResult> Edit(Product product)
+	{
+		if (ModelState.IsValid)
+		{
+			_context.Update(product); // Update the product in the context
+			await _context.SaveChangesAsync(); // Save changes to the database
+
+			TempData["Message"] = $"{product.Title} was updated successfully!";
+			return RedirectToAction(nameof(Index));
+		}
+
+		return View(product);
+	}
 }
