@@ -43,6 +43,11 @@ public class ProductController : Controller
 		return View(p); // If model state is invslid, return the view with the product data and validation errors
 	}
 
+	public IActionResult Delete(int id)
+	{
+		Product? product = _context.Products
+			.Where(p => p.ProductId == id).FirstOrDefault();
+      
 	[HttpGet]
 	public IActionResult Edit(int id)
 	{
