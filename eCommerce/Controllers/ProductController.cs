@@ -47,10 +47,32 @@ public class ProductController : Controller
 	{
 		Product? product = _context.Products
 			.Where(p => p.ProductId == id).FirstOrDefault();
+      
+	[HttpGet]
+	public IActionResult Edit(int id)
+	{
+		Product? product = _context.Products
+			.Where(p => p.ProductId == id)
+			.FirstOrDefault();
 
 		if (product == null)
 		{
 			return NotFound();
+		}
+
+		return View(product);
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> Edit(Product product)
+	{
+		if (ModelState.IsValid)
+		{
+			_context.Update(product); // Update the product in the context
+			await _context.SaveChangesAsync(); // Save changes to the database
+
+			TempData["Message"] = $"{product.Title} was updated successfully!";
+			return RedirectToAction(nameof(Index));
 		}
 
 		return View(product);
