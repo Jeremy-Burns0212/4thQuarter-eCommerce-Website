@@ -17,16 +17,18 @@ public class Member
 	/// Public facing username for the member.
 	/// Alphanumeric characters only
 	/// </summary>
+	/// 	[RegularExpression("^[a-zA-Z0-9]+$", 
+	[RegularExpression("^[a-zA-Z0-9]+$",
+			ErrorMessage = "Username must be alphanumeric only")]
+	[StringLength(25)]
 	public required string Username { get; set; }
 
 	/// <summary>
 	/// Email for the Member
 	/// </summary>
-	[RegularExpression("^[a-zA-Z0-9]+$", 
-		ErrorMessage ="Username must be alphanumeric only")]
-	[StringLength(25)]
-	public required string Email { get; set; }
 
+	public required string Email { get; set; }
+	 
 	/// <summary>
 	/// The members password
 	/// </summary>
