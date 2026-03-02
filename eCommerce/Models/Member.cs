@@ -22,11 +22,16 @@ public class Member
 	/// <summary>
 	/// Email for the Member
 	/// </summary>
+	[RegularExpression("^[a-zA-Z0-9]+$", 
+		ErrorMessage ="Username must be alphanumeric only")]
+	[StringLength(25)]
 	public required string Email { get; set; }
 
 	/// <summary>
 	/// The members password
 	/// </summary>
+	[StringLength(50, MinimumLength = 6, 
+		ErrorMessage ="Your password must be between 6 and 50 chracters")]
 	public required string Password { get; set; }
 
 	/// <summary>
