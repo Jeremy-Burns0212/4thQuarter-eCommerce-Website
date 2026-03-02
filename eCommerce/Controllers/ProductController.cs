@@ -47,6 +47,17 @@ public class ProductController : Controller
 	public async Task<IActionResult> Edit(int id)
 	{
 		Product? product = await _context.Products.FindAsync(id);
+	public IActionResult Delete(int id)
+	{
+		Product? product = _context.Products
+			.Where(p => p.ProductId == id).FirstOrDefault();
+      
+	[HttpGet]
+	public IActionResult Edit(int id)
+	{
+		Product? product = _context.Products
+			.Where(p => p.ProductId == id)
+			.FirstOrDefault();
 
 		if (product == null)
 		{
