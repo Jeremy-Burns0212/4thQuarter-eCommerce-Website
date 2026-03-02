@@ -5,7 +5,10 @@
 
 <h1>Log in to the website</h1>
 
-<form>
+<form method="post">
+	<div asp-validation-summary="All" class="text-danger">
+
+	</div>
 	<div class="mb-3">
 		<label class="form-label" asp-for="UsernameOrEmail"></label>
 		<input class="form-control" placeholder="Username Or Email" asp-for="UsernameOrEmail" />
