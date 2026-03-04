@@ -62,7 +62,7 @@ public class RegistrationViewModel
 	public required string Email { get; set; }
 
 	/// <summary>
-	/// The members password
+	/// The member's password
 	/// </summary>
 	[StringLength(50, MinimumLength = 6,
 		ErrorMessage = "Your password must be between 6 and 50 chracters")]
