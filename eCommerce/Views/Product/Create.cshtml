@@ -5,6 +5,7 @@
 
 <h2>Create new Product</h2>
 
+@* Form for creating a new product. *@
 <form method="post">
 	<div>
 		<label asp-for="Title" class="form-label"></label>
@@ -19,6 +20,7 @@
 	<input type="submit" value="Create" class="btn btn-primary" />
 </form>
 
+@* Client-side validation scripts. *@
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

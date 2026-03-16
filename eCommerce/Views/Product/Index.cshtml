@@ -8,6 +8,8 @@
 <a asp-action="Create" asp-controller="Product" class="btn btn-secondary mb-3">
 	Create Product
 </a>
+
+@* Filter form: title search + min/max price + submit/reset buttons. *@
 <form id="productFilterForm" method="get" asp-action="Index" class="d-flex flex-wrap align-items-end gap-3 mb-4">
 	<div class="flex-grow-1" style="min-width: 280px;">
 		<label for="searchTerm" class="form-label">Title Contains</label>
@@ -27,6 +29,7 @@
 	</div>
 </form>
 
+@* Warning shown when min/max range is invalid. *@
 @if (ViewData["FilterError"] is string filterError)
 {
 	<div class="alert alert-warning" role="alert">
@@ -34,6 +37,7 @@
 	</div>
 }
 
+@* Success message shown after create/edit/delete. *@
 @if (TempData["Message"] != null)
 {
 	<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -42,6 +46,7 @@
 	</div>
 }
 
+@* Product results area. *@
 @if (!Model.Products.Any())
 {
 	<p>No products are currently found</p>
@@ -76,6 +81,7 @@ else
 		</tbody>
 	</table>
 
+	@* Pagination links that keep the current filters. *@
 	<nav aria-label="Product pagination">
 		<ul class="pagination">
 			<li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
@@ -105,7 +111,7 @@ else
 	</nav>
 }
 
-@*between here and line 145 is just code I put in for my sake, just because i wanted to.*@
+@* Client-side check so max price cannot be below min price and/or min price cannot be above max price *@
 <script>
 (() => {
 	const form = document.getElementById('productFilterForm');

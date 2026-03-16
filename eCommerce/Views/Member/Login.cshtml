@@ -5,6 +5,7 @@
 
 <h1>Log in to the website</h1>
 
+@* Login form for existing members. *@
 <form method="post">
 	<div asp-validation-summary="All" class="text-danger">
 
@@ -23,6 +24,7 @@
 	<input class="btn btn-primary" type="submit" value="Login" />
 </form>
 
+@* Client-side validation scripts. *@
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

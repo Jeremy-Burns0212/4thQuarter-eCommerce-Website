@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eCommerce.Data;
 
+/// <summary>
+/// EF Core database context for products and members.
+/// </summary>
 public class ProductDbContext : DbContext
 {
 	public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options)
@@ -25,6 +28,8 @@ public class ProductDbContext : DbContext
 	// Entities to be tracked by DbContext
 	public DbSet<Product> Products { get; set; }
 
+	/// <summary>
+	/// Member records.
+	/// </summary>
 	public DbSet<Member> Members { get; set; }
-	// Entities to be tracked by DbContext
 }

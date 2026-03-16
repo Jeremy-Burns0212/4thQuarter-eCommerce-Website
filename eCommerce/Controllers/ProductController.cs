@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eCommerce.Controllers;
 
+/// <summary>
+/// Handles product listing, filtering, paging, and basic product CRUD pages.
+/// </summary>
 public class ProductController : Controller
 {
 	private readonly ProductDbContext _context;
@@ -14,6 +17,9 @@ public class ProductController : Controller
 		_context = context;
 	}
 
+	/// <summary>
+	/// Shows the product list page with optional filters and pagination.
+	/// </summary>
 	public async Task<IActionResult> Index(string? searchTerm, decimal? maxPrice, decimal? minPrice, int page = 1)
 	{
 		const int productsPerPage = 3;
@@ -21,6 +27,7 @@ public class ProductController : Controller
 		// Start creating query, doesn't run yet
 		IQueryable<Product> query = _context.Products;
 
+		// Check whether the user entered an invalid min/max range.
 		bool isInvalidPriceRange = minPrice.HasValue
 			&& maxPrice.HasValue
 			&& minPrice.Value > maxPrice.Value;
@@ -36,7 +43,7 @@ public class ProductController : Controller
 			query = query.Where(p => p.Title.Contains(searchTerm));
 		}
 
-		// Only apply price filters when range is valid
+		// Apply price filters only when min/max range is valid.
 		if (!isInvalidPriceRange && minPrice.HasValue)
 		{
 			query = query.Where(p => p.Price >= minPrice.Value);
@@ -47,18 +54,21 @@ public class ProductController : Controller
 			query = query.Where(p => p.Price <= maxPrice.Value);
 		}
 
+		// Calculate pagination values.
 		int totalProducts = await query.CountAsync();
 		int totalPagesNeeded = (int)Math.Ceiling(totalProducts / (double)productsPerPage);
 
 		if (page < 1) page = 1;
 		if (totalPagesNeeded > 0 && page > totalPagesNeeded) page = totalPagesNeeded;
 
+		// Read only the current page of products.
 		List<Product> products = await query
 			.OrderBy(p => p.Title)
 			.Skip((page - 1) * productsPerPage)
 			.Take(productsPerPage)
 			.ToListAsync();
 
+		// Send products and current filter/paging state to the view.
 		ProductListViewModel productListViewModel = new()
 		{
 			Products = products,
@@ -151,6 +161,7 @@ public class ProductController : Controller
 			return RedirectToAction(nameof(Index));
 		}
 
+		// Remove the selected product.
 		_context.Remove(product);
 		await _context.SaveChangesAsync();
 
