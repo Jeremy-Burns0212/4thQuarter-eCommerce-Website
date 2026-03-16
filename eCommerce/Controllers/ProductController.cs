@@ -14,10 +14,34 @@ public class ProductController : Controller
 		_context = context;
 	}
 
-	public async Task<IActionResult> Index()
+	public async Task<IActionResult> Index(int page = 1)
 	{
-		List<Product> allProducts = await _context.Products.ToListAsync();  // Fetch all products from the database
-		return View(allProducts);
+		const int productsPerPage = 3;
+
+		int totalProducts = await _context.Products.CountAsync();
+		int totalPagesNeeded = (int)Math.Ceiling(totalProducts / (double)productsPerPage);
+
+		if (page < 1) page = 1;
+
+		// If user tries to navigate beyond last page, send them to the last page.
+		if (totalPagesNeeded > 0 && page > totalPagesNeeded) page = totalPagesNeeded;
+
+		List<Product> products = await _context.Products
+			.OrderBy(p => p.Title)
+			.Skip((page - 1) * productsPerPage)
+			.Take(productsPerPage)
+			.ToListAsync();
+
+		ProductListViewModel productListViewModel = new()
+		{
+			Products = products,
+			CurrentPage = page,
+			TotalPages = totalPagesNeeded,
+			PageSize = productsPerPage,
+			TotalItems = totalProducts
+		};
+
+		return View(productListViewModel);
 	}
 
 	[HttpGet]
@@ -32,15 +56,15 @@ public class ProductController : Controller
 		if (ModelState.IsValid)
 		{
 			// Add to database
-			_context.Products.Add(p);			//Add the product to the context
-			await _context.SaveChangesAsync(); //Save changes to the database
+			_context.Products.Add(p);			//Add the product to the context.
+			await _context.SaveChangesAsync(); //Save changes to the database.
 
-			// TempData is used to pass data and will persist over a redirect
+			// TempData is used to pass data and will persist over a redirect.
 			TempData["Message"] = $"{p.Title} was created successfully!";
 
 			return RedirectToAction(nameof(Index));
 		}
-		return View(p); // If model state is invslid, return the view with the product data and validation errors
+		return View(p); // If model state is invslid, return the view with the product data and validation errors.
 	}
       
 	[HttpGet]
@@ -63,8 +87,8 @@ public class ProductController : Controller
 	{
 		if (ModelState.IsValid)
 		{
-			_context.Update(product); // Update the product in the context
-			await _context.SaveChangesAsync(); // Save changes to the database
+			_context.Update(product); // Update the product in the context.
+			await _context.SaveChangesAsync(); // Save changes to the database.
 
 			TempData["Message"] = $"{product.Title} was updated successfully!";
 			return RedirectToAction(nameof(Index));
