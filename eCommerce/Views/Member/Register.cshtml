@@ -5,6 +5,7 @@
 
 <h1>Register</h1>
 
+@* Registration form for new members. *@
 <form method="post">
 	<div class="form-group">
 		<label asp-for="Email"></label>
@@ -36,6 +37,7 @@
 	</div>
 </form>
 
+@* Client-side validation scripts. *@
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

@@ -8,6 +8,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
+        @* Form for updating an existing product. *@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ProductId" />
@@ -28,10 +29,12 @@
     </div>
 </div>
 
+@* Link back to product list. *@
 <div>
     <a asp-action="Index" asp-controller="Product">Back to Product listings</a>
 </div>
 
+@* Client-side validation scripts. *@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

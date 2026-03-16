@@ -8,7 +8,7 @@ namespace eCommerce.Models;
 public class Member
 {
 	/// <summary>
-	/// Unique identifier for the member
+	/// Unique identifier for the member.
 	/// </summary>
 	[Key]
 	public int MemberId { get; set; }
@@ -17,7 +17,6 @@ public class Member
 	/// Public facing username for the member.
 	/// Alphanumeric characters only
 	/// </summary>
-	/// 	[RegularExpression("^[a-zA-Z0-9]+$", 
 	[RegularExpression("^[a-zA-Z0-9]+$",
 			ErrorMessage = "Username must be alphanumeric only")]
 	[StringLength(25)]
@@ -26,7 +25,6 @@ public class Member
 	/// <summary>
 	/// Email for the Member
 	/// </summary>
-
 	public required string Email { get; set; }
 	 
 	/// <summary>
@@ -42,13 +40,15 @@ public class Member
 	public DateOnly DateOfBirth { get; set; }
 }
 
+/// <summary>
+/// Input model for member registration.
+/// </summary>
 public class RegistrationViewModel
 {
 	/// <summary>
 	/// Public facing username for the member.
 	/// Alphanumeric characters only
 	/// </summary>
-	/// 	[RegularExpression("^[a-zA-Z0-9]+$", 
 	[RegularExpression("^[a-zA-Z0-9]+$",
 			ErrorMessage = "Username must be alphanumeric only")]
 	[StringLength(25)]
@@ -57,7 +57,6 @@ public class RegistrationViewModel
 	/// <summary>
 	/// Email for the Member
 	/// </summary>
-
 	[DataType(DataType.EmailAddress)]
 	public required string Email { get; set; }
 
@@ -69,6 +68,9 @@ public class RegistrationViewModel
 	[DataType(DataType.Password)]
 	public required string Password { get; set; }
 
+	/// <summary>
+	/// Confirmation value that must match Password.
+	/// </summary>
 	[Compare(nameof(Password))]
 	[DataType(DataType.Password)]
 	public required string ConfirmPassword { get; set; }
@@ -80,10 +82,19 @@ public class RegistrationViewModel
 	public DateOnly DateOfBirth { get; set; }
 }
 
+/// <summary>
+/// Input model for member login.
+/// </summary>
 public class LoginViewModel
 {
+	/// <summary>
+	/// Username or email entered by the member.
+	/// </summary>
 	public required string UsernameOrEmail { get; set; }
 
+	/// <summary>
+	/// Password entered by the member.
+	/// </summary>
 	[DataType(DataType.Password)]
 	public required string Password { get; set; }
 }

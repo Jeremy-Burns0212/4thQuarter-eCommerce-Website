@@ -5,10 +5,39 @@
 
 <h2>Product Listing</h2>
 
-<a asp-action="Create" asp-controller="Product" class="btn btn-secondary">
+<a asp-action="Create" asp-controller="Product" class="btn btn-secondary mb-3">
 	Create Product
 </a>
 
+@* Filter form: title search + min/max price + submit/reset buttons. *@
+<form id="productFilterForm" method="get" asp-action="Index" class="d-flex flex-wrap align-items-end gap-3 mb-4">
+	<div class="flex-grow-1" style="min-width: 280px;">
+		<label for="searchTerm" class="form-label">Title Contains</label>
+		<input type="text" id="searchTerm" name="searchTerm" value="@Model.ProductTitleSearch" class="form-control" />
+	</div>
+	<div style="min-width: 170px;">
+		<label for="minPrice" class="form-label">Min Price</label>
+		<input type="number" id="minPrice" name="minPrice" value="@Model.MinPrice" step="0.01" min="0" class="form-control" />
+	</div>
+	<div style="min-width: 170px;">
+		<label for="maxPrice" class="form-label">Max Price</label>
+		<input type="number" id="maxPrice" name="maxPrice" value="@Model.MaxPrice" step="0.01" min="0" class="form-control" />
+	</div>
+	<div class="d-flex gap-2" style="min-width: 180px;">
+		<button type="submit" class="btn btn-primary">Search</button>
+		<a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+	</div>
+</form>
+
+@* Warning shown when min/max range is invalid. *@
+@if (ViewData["FilterError"] is string filterError)
+{
+	<div class="alert alert-warning" role="alert">
+		@filterError
+	</div>
+}
+
+@* Success message shown after create/edit/delete. *@
 @if (TempData["Message"] != null)
 {
 	<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -17,6 +46,7 @@
 	</div>
 }
 
+@* Product results area. *@
 @if (!Model.Products.Any())
 {
 	<p>No products are currently found</p>
@@ -51,31 +81,71 @@ else
 		</tbody>
 	</table>
 
+	@* Pagination links that keep the current filters. *@
 	<nav aria-label="Product pagination">
 		<ul class="pagination">
 			<li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-				<a class="page-link" asp-action="Index" asp-route-page="1">First</a>
+				<a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@Model.ProductTitleSearch" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">First</a>
 			</li>
 
 			<li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-				<a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+				<a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-searchTerm="@Model.ProductTitleSearch" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">Previous</a>
 			</li>
 
 			@for (int i = 1; i <= Model.TotalPages; i++)
 			{
 				<li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-					<a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+					<a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@Model.ProductTitleSearch" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">@i</a>
 				</li>
 			}
 
 			<li class="page-item @(Model.CurrentPage == Model.TotalPages || Model.TotalPages == 0 ? "disabled" : "")">
-				<a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+				<a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-searchTerm="@Model.ProductTitleSearch" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">Next</a>
 			</li>
 
 			<li class="page-item @(Model.CurrentPage == Model.TotalPages || Model.TotalPages == 0 ? "disabled" : "")">
-				<a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages">Last</a>
+				<a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" asp-route-searchTerm="@Model.ProductTitleSearch" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">Last</a>
 			</li>
 		</ul>
 		<p> Page @Model.CurrentPage of @Model.TotalPages (Total Items: @Model.TotalItems)</p>
 	</nav>
 }
+
+@* Client-side check so max price cannot be below min price and/or min price cannot be above max price *@
+<script>
+(() => {
+	const form = document.getElementById('productFilterForm');
+	const minInput = document.getElementById('minPrice');
+	const maxInput = document.getElementById('maxPrice');
+
+	if (!form || !minInput || !maxInput) return;
+
+	const errorMessage = 'Max Price must be greater than or equal to Min Price.';
+
+	function validatePriceRange() {
+		const minValue = minInput.value === '' ? null : Number(minInput.value);
+		const maxValue = maxInput.value === '' ? null : Number(maxInput.value);
+
+		minInput.setCustomValidity('');
+		maxInput.setCustomValidity('');
+
+		if (minValue !== null && maxValue !== null && minValue > maxValue) {
+			minInput.setCustomValidity(errorMessage);
+			maxInput.setCustomValidity(errorMessage);
+			return false;
+		}
+
+		return true;
+	}
+
+	minInput.addEventListener('input', validatePriceRange);
+	maxInput.addEventListener('input', validatePriceRange);
+
+	form.addEventListener('submit', (e) => {
+		if (!validatePriceRange()) {
+			e.preventDefault();
+			form.reportValidity();
+		}
+	});
+})();
+</script>

@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eCommerce.Controllers;
 
+/// <summary>
+/// Handles member registration, login, and logout.
+/// </summary>
 public class MemberController : Controller
 {
 	private readonly ProductDbContext _context;
@@ -14,11 +17,17 @@ public class MemberController : Controller
 		_context = context;
 	}
 
+	/// <summary>
+	/// Shows the registration form.
+	/// </summary>
 	public IActionResult Register()
 	{
 		return View();
 	}
 
+	/// <summary>
+	/// Creates a new member when the registration form is valid.
+	/// </summary>
 	[HttpPost]
 	public async Task<IActionResult> Register(RegistrationViewModel reg)
 	{
@@ -26,7 +35,7 @@ public class MemberController : Controller
 		{
 			// Check if username or email is already taken
 			bool usernameTaken = await _context.Members
-								.AnyAsync(m => m.Username == reg.Username);
+							.AnyAsync(m => m.Username == reg.Username);
 
 			if (usernameTaken)
 			{
@@ -34,8 +43,9 @@ public class MemberController : Controller
 				return View(reg);
 			}
 
+			// Stop duplicate emails.
 			bool emailTaken = await _context.Members
-								.AnyAsync(m => m.Email == reg.Email);
+							.AnyAsync(m => m.Email == reg.Email);
 
 			if (emailTaken)
 			{
@@ -48,7 +58,7 @@ public class MemberController : Controller
 				return View(reg);
 			}
 
-			// Map ViewModel to Member model tracked by DB
+			// Map registration input to a new Member entity.
 			Member newMember = new()
 			{
 				Username = reg.Username,
@@ -65,24 +75,29 @@ public class MemberController : Controller
 		return View(reg);
 	}
 
-
+	/// <summary>
+	/// Shows the login form.
+	/// </summary>
 	[HttpGet]
 	public IActionResult Login()
 	{
 		return View(); 
 	}
 
+	/// <summary>
+	/// Logs a member in by checking username/email + password.
+	/// </summary>
 	[HttpPost]
 	public async Task<IActionResult> Login(LoginViewModel login)
 	{
 		if (ModelState.IsValid)
 		{
-			// CHeck if UsernameOrEmail and Pasaword mathces a record in the database
+			// Check if UsernameOrEmail and Pasaword mathces a record in the database
 			var loggedInMember = await _context.Members
-								.Where(m => (m.Username == login.UsernameOrEmail || m.Email == login.UsernameOrEmail)
-									&& m.Password == login.Password)
-								.Select(m => new { m.Username, m.MemberId})
-								.SingleOrDefaultAsync();
+							.Where(m => (m.Username == login.UsernameOrEmail || m.Email == login.UsernameOrEmail)
+								&& m.Password == login.Password)
+							.Select(m => new { m.Username, m.MemberId})
+							.SingleOrDefaultAsync();
 
 			if (loggedInMember == null)
 			{
