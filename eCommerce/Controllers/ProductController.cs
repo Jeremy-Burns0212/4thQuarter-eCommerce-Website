@@ -14,19 +14,46 @@ public class ProductController : Controller
 		_context = context;
 	}
 
-	public async Task<IActionResult> Index(int page = 1)
+	public async Task<IActionResult> Index(string? searchTerm, decimal? maxPrice, decimal? minPrice, int page = 1)
 	{
 		const int productsPerPage = 3;
 
-		int totalProducts = await _context.Products.CountAsync();
+		// Start creating query, doesn't run yet
+		IQueryable<Product> query = _context.Products;
+
+		bool isInvalidPriceRange = minPrice.HasValue
+			&& maxPrice.HasValue
+			&& minPrice.Value > maxPrice.Value;
+
+		if (isInvalidPriceRange)
+		{
+			ViewData["FilterError"] = "Min Price cannot be greater than Max Price.";
+		}
+
+		// Apply filters
+		if (!string.IsNullOrWhiteSpace(searchTerm))
+		{
+			query = query.Where(p => p.Title.Contains(searchTerm));
+		}
+
+		// Only apply price filters when range is valid
+		if (!isInvalidPriceRange && minPrice.HasValue)
+		{
+			query = query.Where(p => p.Price >= minPrice.Value);
+		}
+
+		if (!isInvalidPriceRange && maxPrice.HasValue)
+		{
+			query = query.Where(p => p.Price <= maxPrice.Value);
+		}
+
+		int totalProducts = await query.CountAsync();
 		int totalPagesNeeded = (int)Math.Ceiling(totalProducts / (double)productsPerPage);
 
 		if (page < 1) page = 1;
-
-		// If user tries to navigate beyond last page, send them to the last page.
 		if (totalPagesNeeded > 0 && page > totalPagesNeeded) page = totalPagesNeeded;
 
-		List<Product> products = await _context.Products
+		List<Product> products = await query
 			.OrderBy(p => p.Title)
 			.Skip((page - 1) * productsPerPage)
 			.Take(productsPerPage)
@@ -38,7 +65,10 @@ public class ProductController : Controller
 			CurrentPage = page,
 			TotalPages = totalPagesNeeded,
 			PageSize = productsPerPage,
-			TotalItems = totalProducts
+			TotalItems = totalProducts,
+			ProductTitleSearch = searchTerm,
+			MinPrice = minPrice,
+			MaxPrice = maxPrice
 		};
 
 		return View(productListViewModel);
